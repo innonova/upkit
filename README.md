@@ -22,11 +22,13 @@ Epic Games, Inc. MIT licensed (`LICENSE`).
 Node 24 or later. From a clone, it runs as it is (`node src/cli.ts …`, no
 build step); `npm run build` (`node build.mjs`) writes `dist/upkit.mjs`, one
 file that is all a modder needs beside Node (`node upkit.mjs …`). Each
-release has that file on its GitHub page. `npm test` runs the tests,
+release has that file on its GitHub page, attested by the workflow that
+built it (`gh attestation verify upkit.mjs --repo innonova/upkit`); on npm,
+each version carries its provenance and was approved by a person before it
+could be installed (`.github/workflows/release.yml`). `npm test` runs the tests,
 `npm run type-check` checks the types.
 
-As a library (`npm install github:innonova/upkit`, until it is on npm as
-`@innonova/upkit`), each module of `src/` is an entry: `@innonova/upkit/upk`
+As a library (`npm install @innonova/upkit`), each module of `src/` is an entry: `@innonova/upkit/upk`
 reads a package, `@innonova/upkit/modpatch` runs a PatchUPK script,
 `@innonova/upkit/upkmodrun` a `.upkmod`, and so on, compiled to `lib/` with
 their types. Only `apply` and the command line touch the file system; a

@@ -1,0 +1,48 @@
+# A release, on a version tag (v0.2.0 for package.json's 0.2.0):
+# - npm: the package staged on npm with provenance, through npm's trusted
+#   publishing (this workflow's OIDC identity; no token anywhere). The
+#   relationship allows staging only: a person approves each version with
+#   their 2FA (npm stage approve <id>, or on npmjs.com) before anyone can
+#   install it.
+# - GitHub: a release with dist/upkit.mjs, the one file a modder needs beside
+#   Node, attested by this run (gh attestation verify upkit.mjs --repo innonova/upkit).
+name: release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write # the GitHub release
+      id-token: write # npm's trusted publishing and provenance; the attestation
+      attestations: write
+      artifact-metadata: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - name: the tag is the package's version
+        run: |
+          v=$(node -p "require('./package.json').version")
+          [[ "$GITHUB_REF_NAME" == "v$v" ]] || { echo "tag $GITHUB_REF_NAME, package.json $v" >&2; exit 1; }
+      - run: npm ci
+      - run: npm run type-check
+      - run: npm test
+      - name: staged on npm
+        run: npm stage publish --provenance
+      - uses: actions/attest@v4
+        with:
+          subject-path: dist/upkit.mjs
+      - name: the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" \
+            --notes "upkit $GITHUB_REF_NAME. On npm as @innonova/upkit once approved; upkit.mjs is the command line in one file (Node 24 or later)." \
+            dist/upkit.mjs

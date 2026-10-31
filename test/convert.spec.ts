@@ -7,7 +7,8 @@ import { join, resolve } from 'node:path'
 // PatchUPK mods converted to .upkmod (features/upkmod-convert.md), on the
 // packages they were made for, without them: plain Enemy Within's, and Long
 // War 1.0's as its installer has them (over plain Enemy Within's).
-const SAMPLES = resolve(import.meta.dirname, '../../samples')
+// UPKIT_SAMPLES, or samples/ beside test/ (git-ignored; README, "Tests").
+const SAMPLES = process.env.UPKIT_SAMPLES ?? resolve(import.meta.dirname, '../samples')
 const EW = join(SAMPLES, 'ew/CookedPCConsole')
 const LW_APP = join(SAMPLES, 'Long War Mod Manager 1.0d-620-1-0d/LongWarFiles/_Long War EW 1.0 for PC-88-1-0.exe/{app}/XComGame/CookedPCConsole')
 const MODS = join(SAMPLES, 'additional_mods')
@@ -31,11 +32,12 @@ describe.skipIf(!have)('PatchUPK mods converted to .upkmod', () => {
   const lw = join(dir, 'lw')
   mkdirSync(ew)
   mkdirSync(lw)
-  for (const f of readdirSync(EW)) {
+  // A skipped suite's body still runs (to collect its tests): nothing to copy without the samples.
+  for (const f of have ? readdirSync(EW) : []) {
     copyFileSync(join(EW, f), join(ew, f))
     copyFileSync(join(EW, f), join(lw, f))
   }
-  for (const f of ['Engine.upk', 'XComGame.upk', 'XComStrategyGame.upk', 'LongWar.upk', 'UICollection_Tactical_SF.upk']) copyFileSync(join(LW_APP, f), join(lw, f))
+  for (const f of have ? ['Engine.upk', 'XComGame.upk', 'XComStrategyGame.upk', 'LongWar.upk', 'UICollection_Tactical_SF.upk'] : []) copyFileSync(join(LW_APP, f), join(lw, f))
   const mod = (name: string) => [join(MODS, 'Mods', name), join(MODS, 'mod.files/Sightlines-1.4', name)].find((p) => existsSync(p))!
 
   it('Lightning Reflexes on Long War 1.0: its class as source diffs, checked; its options as the script has them; there, installed', () => {

@@ -72,8 +72,9 @@ tested: Long War 1.0, LWR 2.06
 })
 
 describe.skipIf(!haveCorpus)('mods as source diffs on the game’s packages', () => {
-  const lw = opened(CORPUS[3]!)
-  const labs = decompileClass(lw.linker, lw.pkg, 'XGFacility_Labs')
+  // A skipped suite's body still runs (to collect its tests): nothing opened without the samples.
+  const lw = haveCorpus ? opened(CORPUS[3]!) : (undefined as unknown as ReturnType<typeof opened>)
+  const labs = haveCorpus ? decompileClass(lw.linker, lw.pkg, 'XGFacility_Labs') : ''
   const write = (o: ReturnType<typeof opened>, edit: (s: string) => string, name = 'test') =>
     writeUpkmod(o.linker, o.pkg, 'XComStrategyGame.upk', [{ cls: 'XGFacility_Labs', text: edit(labs) }], { name })
   const apply = (o: { pkg: Package; linker: Linker }, text: string) => applyUpkmodTo(o.linker, o.pkg, 'XComStrategyGame', parseUpkmod(text).classes)

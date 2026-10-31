@@ -1,0 +1,24 @@
+# Types, tests and the build on every push and pull request. The tests that
+# need the game's own packages skip here (none are in the repository); they
+# run where the game is (README, "Tests").
+name: test
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run type-check
+      - run: npm test
+      - name: the command line runs
+        run: node dist/upkit.mjs | head -3

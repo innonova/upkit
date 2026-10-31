@@ -7,7 +7,7 @@
 // texture, an object outside every class) is said, not converted.
 
 import { readFileSync } from 'node:fs'
-import { parseModScript } from '../../src/model/patchupk.ts'
+import { parseModScript } from './patchupk.ts'
 import { applyScripts } from './apply.ts'
 import { classPathIn } from './changes.ts'
 import { decompileClass } from './classdecomp.ts'

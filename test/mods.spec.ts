@@ -23,8 +23,8 @@ const scripts = existsSync(MODS)
 
 describe.skipIf(!haveCorpus || !scripts.length || !existsSync(`${VANILLA}/XComGame.upk`))('mods people wrote, compiled back from their decompiled source', () => {
   it('every function the mods change', async () => {
-    const { Package: AppPackage } = await import('../../src/model/upk.ts')
-    const { runScript } = await import('../../src/model/modpatch.ts')
+    const { Package: AppPackage } = await import('../src/upk.ts')
+    const { runScript } = await import('../src/modpatch.ts')
     let total = 0
     let same = 0
     const report: string[] = []

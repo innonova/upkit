@@ -13,13 +13,25 @@ loop: decompile, edit the source, compile.
 It works on the game's own files on your machine. Nothing of the game's is
 part of upkit, and decompiled code stays where you put it.
 
+Not affiliated with or endorsed by Epic Games, Firaxis Games or 2K. XCOM is
+a trademark of Take-Two Interactive Software, Inc.; Unreal is a trademark of
+Epic Games, Inc. MIT licensed (`LICENSE`).
+
 ## Use
 
-Node 24 or later runs it as it is (`node upkit/src/cli.ts …`, no build
-step), or as one file: `npm run build` in `upkit/` (`node build.mjs`) writes
-`upkit/dist/upkit.mjs`, which is all a modder needs beside Node
-(`node upkit.mjs …`). `npm test` runs its tests, `npm run type-check` checks
-its types.
+Node 24 or later. From a clone, it runs as it is (`node src/cli.ts …`, no
+build step); `npm run build` (`node build.mjs`) writes `dist/upkit.mjs`, one
+file that is all a modder needs beside Node (`node upkit.mjs …`). Each
+release has that file on its GitHub page. `npm test` runs the tests,
+`npm run type-check` checks the types.
+
+As a library (`npm install github:innonova/upkit`, until it is on npm as
+`@innonova/upkit`), each module of `src/` is an entry: `@innonova/upkit/upk`
+reads a package, `@innonova/upkit/modpatch` runs a PatchUPK script,
+`@innonova/upkit/upkmodrun` a `.upkmod`, and so on, compiled to `lib/` with
+their types. Only `apply` and the command line touch the file system; a
+browser build gives `node:fs` and `node:path` stand-ins (the Long War Tech
+Tree site does).
 
 The common case, a change to a function as a mod script:
 
@@ -129,8 +141,8 @@ of its own readme and no mod can depend on it:
 No uninstall scripts (`.uninstall.txt`) are written: the originals are kept.
 
 
-The engine is the one the lwtree site's Tools page uses
-(`src/model/modpatch.ts` in this repository), written from PatchUPK's
+The engine is the one the Long War Tech Tree desktop app's Tools page uses
+(`src/modpatch.ts`), written from PatchUPK's
 documentation and from its observed behaviour, not from its code (UPKUtils is
 GPL v2).
 
@@ -190,7 +202,7 @@ package: XComStrategyGame.upk
 - **Several mods**, in order: each applied to the source the ones before it
   left, then compiled. Two that change different lines of one function
   combine. One that changes what another changed does not fit, and says so;
-  the lwtree app names the mod it conflicts with.
+  the Long War Tech Tree app names the mod it conflicts with.
 - **Other versions**: a mod fits every version whose code still has its
   anchor lines. A mod written on Long War 1.0 that changes `AddScientists`
   applies to LWR 2.06 as well; one that changes `GetResearchPerHour`, which
@@ -236,7 +248,7 @@ each convert and apply there, and on the other versions refuse where those
 rewrote the same functions. A mod written as small edits from the start
 (`compile --upkmod`) travels further.
 
-`upkit apply` and the lwtree site's Tools page take `.upkmod` files beside
+`upkit apply` and the Long War Tech Tree app's Tools page take `.upkmod` files beside
 PatchUPK scripts. The game's script packages (Core, Engine, XComGame …) must
 be in the folder: the classes are decompiled and compiled against them.
 
@@ -545,11 +557,16 @@ writes it in a form the compiler reads back the same:
 | `src/natives.ts` | the native interface: classes only C++ defines (members, parents from the bytecode); the reference |
 | `notes/natives.md` | our notes on what natives do |
 | `src/fidelity.ts` | whether a function's source says all its bytecode; where not, the `__asm` escapes it needs, found by compiling |
+| `src/upk.ts` | a package read for the PatchUPK engine and the site: names, imports, exports, compressed packages made whole |
+| `src/modpatch.ts`, `src/pseudocode.ts` | PatchUPK's command set, our own implementation, checked against PatchUPK byte for byte |
+| `src/patchupk.ts` | a PatcherGUI script's description and options, for a mod list |
 | `src/cli.ts` | the command line (`build.mjs` bundles it into one file) |
 
-Tests (`npx vitest run` in `upkit/`) run on the game's packages in the
-repository's git-ignored `samples/` folder (vanilla ones in `samples/ew/`)
-and skip without them: every script decoded and encoded back, every object
+Tests (`npm test`) run on the game's packages in a `samples/` folder beside
+`test/` (git-ignored; or wherever `UPKIT_SAMPLES` points): Long War 1.0's
+`CookedPCConsole/` and `Config/`, vanilla Enemy Within's in `ew/`, LWR's in
+`lwr/`, mods people wrote in `additional_mods/`. They skip without them, so
+CI runs only what needs no game files; the rest runs where the game is: every script decoded and encoded back, every object
 read to its end, every package written back unchanged, every function
 through PatchUPK, every class decompiled and read back unchanged, every
 class's defaults compiled from text, the round trips above, the rebuilt mod

@@ -135,8 +135,8 @@ describe.skipIf(!haveCorpus)('edits that add to the package', () => {
 
   it('a new name, as a mod script the app’s PatchUPK implementation applies', async () => {
     const { modScript } = await import('../src/patch.ts')
-    const { Package: AppPackage } = await import('../../src/model/upk.ts')
-    const { runScript } = await import('../../src/model/modpatch.ts')
+    const { Package: AppPackage } = await import('../src/upk.ts')
+    const { runScript } = await import('../src/modpatch.ts')
     const { Package } = await import('../src/package.ts')
     const linker = new Linker([dirname(CORPUS[0]!)])
     const pkg = load(CORPUS[3]!)
@@ -172,8 +172,8 @@ describe.skipIf(!haveCorpus)('a whole class edited', () => {
     const { packageWith, modScriptWith } = await import('../src/changes.ts')
     const { defaultsBlock } = await import('../src/defaults.ts')
     const { Package } = await import('../src/package.ts')
-    const { Package: AppPackage } = await import('../../src/model/upk.ts')
-    const { runScript } = await import('../../src/model/modpatch.ts')
+    const { Package: AppPackage } = await import('../src/upk.ts')
+    const { runScript } = await import('../src/modpatch.ts')
     const { readObject, readStructHead } = await import('../src/objects.ts')
     const linker = new Linker([dirname(CORPUS[0]!)])
     const pkg = load(CORPUS[3]!)
@@ -557,8 +557,8 @@ describe.skipIf(!haveCorpus)('a whole package as PatchUPK makes it', () => {
   }
   for (const [name, edit] of cases)
     it(`a function's code ${name} (the app's implementation)`, async () => {
-      const { Package: AppPackage } = await import('../../src/model/upk.ts')
-      const { runScript } = await import('../../src/model/modpatch.ts')
+      const { Package: AppPackage } = await import('../src/upk.ts')
+      const { runScript } = await import('../src/modpatch.ts')
       const { pkg, ours, script } = await edited(edit)
       const copy = new AppPackage(pkg.bytes.slice())
       const r = runScript(script, { open: () => copy })

@@ -12,8 +12,8 @@
 
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
-import { runScript, type Step } from '../../src/model/modpatch.ts'
-import { Package as ScriptPackage } from '../../src/model/upk.ts'
+import { runScript, type Step } from './modpatch.ts'
+import { Package as ScriptPackage } from './upk.ts'
 import { decompress } from './package.ts'
 import { upkmodRunner } from './upkmodrun.ts'
 

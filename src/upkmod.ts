@@ -1,4 +1,4 @@
-// Mods as source diffs (features/upkit-source-mods.md): a .upkmod file holds,
+// Mods as source diffs (xcom-ew-lw-tree's features/upkit-source-mods.md): a .upkmod file holds,
 // per class, unified-diff hunks of the class's source as `upkit class` writes
 // it. Applied to the player's own package: the class decompiled, each hunk
 // found by its anchor (its context and the lines it takes away) and replaced,
@@ -16,7 +16,7 @@
 // PatchUPK must never read such a file as its own: the format has no line it
 // takes as a command (checked when one is written and when one is read).
 
-import { isUpkmod as isUpkmodText, parseCommands } from '../../src/model/modpatch.ts'
+import { isUpkmod as isUpkmodText, parseCommands } from './modpatch.ts'
 import { decompileClass } from './classdecomp.ts'
 import { classesPackage, classPathIn } from './changes.ts'
 import { Linker } from './linker.ts'

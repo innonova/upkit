@@ -10,9 +10,9 @@ import { VANILLA } from './corpus.ts'
 
 // The native interface, from vanilla Enemy Within's packages: the classes only C++
 // defines, their parents and members as the bytecode shows them, and the reference.
-const dir = dirname(VANILLA[0]!)
+const dir = VANILLA[0] ? dirname(VANILLA[0]) : ''
 
-describe.skipIf(!VANILLA.every((p) => existsSync(p)))('the native interface', () => {
+describe.skipIf(VANILLA.length < 4 || !VANILLA.every((p) => existsSync(p)))('the native interface', () => {
   it('classes only C++ defines: their parents and what their members hold, as the shipped bytecode shows', () => {
     const c = cppClasses(new Linker([dir]))
     expect(c.get('engine.netconnection')?.parent).toBe('Engine.Player')

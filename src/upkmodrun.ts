@@ -5,8 +5,8 @@
 // (upkmod.ts); the game's other packages, which the compiler reads for their
 // types, come from `neighbour` (a folder, or what the site read beforehand).
 
-import type { RunOptions, RunResult, Step } from '../../src/model/modpatch.ts'
-import { Package as ScriptPackage } from '../../src/model/upk.ts'
+import type { RunOptions, RunResult, Step } from './modpatch.ts'
+import { Package as ScriptPackage } from './upk.ts'
 import { Linker } from './linker.ts'
 import { openPackage } from './package.ts'
 import { applyUpkmodTo, parseUpkmod, UpkmodError } from './upkmod.ts'

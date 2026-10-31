@@ -1,8 +1,20 @@
 {
-  "name": "upkit",
+  "name": "@innonova/upkit",
   "version": "0.1.0",
   "description": "An UnrealScript decompiler and recompiler for XCOM: Enemy Within's packages",
-  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/innonova/upkit.git"
+  },
+  "homepage": "https://github.com/innonova/upkit#readme",
+  "keywords": [
+    "xcom",
+    "unrealscript",
+    "unreal-engine-3",
+    "decompiler",
+    "modding"
+  ],
   "type": "module",
   "engines": {
     "node": ">=24"
@@ -10,14 +22,28 @@
   "bin": {
     "upkit": "dist/upkit.mjs"
   },
+  "files": [
+    "dist/",
+    "lib/",
+    "notes/"
+  ],
   "scripts": {
-    "build": "node build.mjs",
+    "build": "node build.mjs && tsc -p tsconfig.build.json",
     "test": "vitest run",
-    "type-check": "tsc --noEmit -p ."
+    "type-check": "tsc --noEmit -p .",
+    "prepare": "npm run build"
   },
   "devDependencies": {
     "@types/node": "^24.13.4",
     "vite": "^8.2.2",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "typescript": "~6.0.0"
+  },
+  "exports": {
+    "./*": {
+      "types": "./lib/*.d.ts",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

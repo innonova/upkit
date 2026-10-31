@@ -4,7 +4,8 @@ import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { openPackage, type Package } from '../src/package.ts'
 
-const SAMPLES = resolve(import.meta.dirname, '../../samples')
+// UPKIT_SAMPLES, or samples/ beside test/ (git-ignored; README, "Tests").
+const SAMPLES = process.env.UPKIT_SAMPLES ?? resolve(import.meta.dirname, '../samples')
 export const CORPUS = [
   'CookedPCConsole/Core.upk',
   'CookedPCConsole/Engine.upk',

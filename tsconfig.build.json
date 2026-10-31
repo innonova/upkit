@@ -1,0 +1,14 @@
+{
+  // The library the site and others import: lib/*.js with their .d.ts (the
+  // command line is dist/upkit.mjs, build.mjs).
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "rewriteRelativeImportExtensions": true,
+    "declaration": true,
+    "rootDir": "src",
+    "outDir": "lib"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/cli.ts"]
+}

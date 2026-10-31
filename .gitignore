@@ -1,0 +1,5 @@
+node_modules/
+dist/
+lib/
+# The game's own packages for the tests: never in the repository (README, "Tests").
+samples

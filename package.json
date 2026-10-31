@@ -1,6 +1,6 @@
 {
   "name": "@innonova/upkit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "An UnrealScript decompiler and recompiler for XCOM: Enemy Within's packages",
   "license": "MIT",
   "repository": {

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // upkit's command line. Run with Node 24 or later (it runs TypeScript as it
-// is): node upkit/src/cli.ts <command> …, or the one-file build: node upkit.mjs.
+// is): node src/cli.ts <command> …, or the one-file build: node upkit.mjs.
 
 const USAGE = `upkit: decompile Enemy Within's UnrealScript, edit it, compile it back.
 

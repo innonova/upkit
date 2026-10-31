@@ -638,6 +638,14 @@ export function decompressPackage(b: Uint8Array): Uint8Array {
   const ov = new DataView(out.buffer)
   ov.setInt32(flagsAt, 0, true)
   ov.setInt32(flagsAt + 4, 0, true)
+  // The fields after the chunk table (package source, packages to cook, texture
+  // allocations) move up to follow the zero count; left behind the old entries, a
+  // reader takes them for those fields (XCOM 2 hung on one). The header's tail is
+  // zeroed: the tables are found by their offsets.
+  const tableEnd = flagsAt + 8 + 16 * count
+  const headerEnd = chunks[0]!.uOff
+  out.copyWithin(flagsAt + 8, tableEnd, headerEnd)
+  out.fill(0, headerEnd - 16 * count, headerEnd)
   ov.setUint32(packageFlagsAt, ov.getUint32(packageFlagsAt, true) & ~PKG_STORE_COMPRESSED, true)
   return out
 }

@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { parseCommands, runScript } from '../src/modpatch.ts'
-import { Package, scriptPackage } from '../src/upk.ts'
+import { Package, decompressPackage, scriptPackage } from '../src/upk.ts'
 
 // UPKIT_SAMPLES, or samples/ beside test/ (git-ignored; README, "Tests").
 const SAMPLES = process.env.UPKIT_SAMPLES ?? resolve(import.meta.dirname, '../samples')
@@ -313,5 +313,30 @@ describe.skipIf(!existsSync(ewCooked) || !existsSync(enabler))('a BEFORE found i
     const again = runScript(text, { open: (n) => first.packages.get(n.toLowerCase())?.clone() })
     expect(again.steps.filter((x) => x.status !== 'already')).toEqual([])
     expect(again.status).toBe('installed')
+  })
+})
+
+// A package compressed in chunks (most _SF packages), made whole: the header's fields
+// after the chunk table follow the zero chunk count, as in a package never compressed.
+const chunked = resolve(SAMPLES, 'CookedPCConsole/GameUnit_XComFloater_SF.upk')
+describe.skipIf(!existsSync(chunked))('decompressPackage on a chunked package', () => {
+  it('moves the fields after the chunk table up to follow the zero count', () => {
+    const before = new Uint8Array(readFileSync(chunked))
+    const v = new DataView(before.buffer, before.byteOffset)
+    let o = 12
+    o += 4 + v.getInt32(o, true)
+    o += 4 + 28 + 16 + 16
+    o += 4 + 12 * v.getInt32(o, true) + 8
+    const count = v.getInt32(o + 4, true)
+    expect(v.getInt32(o, true)).toBe(2) // LZO
+    expect(count).toBeGreaterThan(0)
+    const after = decompressPackage(before)
+    const w = new DataView(after.buffer, after.byteOffset)
+    expect([w.getInt32(o, true), w.getInt32(o + 4, true)]).toEqual([0, 0])
+    // Package source and the count of packages to cook, as they followed the table.
+    const tableEnd = o + 8 + 16 * count
+    expect(w.getUint32(o + 8, true)).toBe(v.getUint32(tableEnd, true))
+    expect(w.getInt32(o + 12, true)).toBe(v.getInt32(tableEnd + 4, true))
+    expect(new Package(after).exports.length).toBeGreaterThan(0)
   })
 })
